@@ -775,20 +775,20 @@ tab_parent.add(tab3, text="    Create Fusion  ")
 
 
 ########WIDGETS for TAB0 #####################
-Heading=ttk.Label(tab0,text="iGEM Tel Aviv 2019",font=('Calibri', '12','bold'))
-Heading.grid(row=0,column=0, padx=15, pady=10,columnspan=2)
-Heading=ttk.Label(tab0,text="TailOR Swift",font=('Calibri', '12','bold'))
-Heading.grid(row=0,column=2, padx=15, pady=10,columnspan=3)
-im = Image.open('tailorswift_small.jpg')
+Heading=ttk.Label(tab0,text="iGEM Tel Aviv 2019      TailOR-Swift",font=('Calibri', '12','bold'))
+Heading.grid(row=0,column=0, padx=15, pady=10,columnspan=10)
+#Heading=ttk.Label(tab0,text="TailOR Swift",font=('Calibri', '12','bold'))
+#Heading.grid(row=0,column=2, padx=15, pady=10,columnspan=3)
+im = Image.open('tailorswift.jpg')
 ph = ImageTk.PhotoImage(im)
 TailImage= ttk.Label(tab0,image=ph)
-TailImage.grid(row=3,column=3,columnspan=10,rowspan=10)
+TailImage.grid(row=1,column=0,columnspan=10,rowspan=10)
 InstructionLabel= ttkwidgets.LinkLabel(tab0, text="For software instruction press here",
 link="https://2019.igem.org/Team:TAU_Israel",
 normal_color=StColors.purple,
 hover_color=StColors.torkiz,
 clicked_color=StColors.light_grey)
-InstructionLabel.grid(row=15,column=3, padx=15, pady=10,columnspan=4)
+InstructionLabel.grid(row=15,column=2, padx=15, pady=10,columnspan=4)
 
 
 
