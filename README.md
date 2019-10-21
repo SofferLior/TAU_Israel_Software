@@ -7,5 +7,6 @@ For using the software ( No python required) -
   (1) Downlaod "Tail OR_Swift.zip" from Mac OS directory
   (2) Execute zip file
   (3) Run "Run-Tail OR_Swift" 
-Enjoy
+  
+  Enjoy
 
