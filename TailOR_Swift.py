@@ -4,6 +4,7 @@ from tkinter import filedialog
 import csv
 from PIL import Image, ImageTk
 import ttkwidgets
+import os,sys
 
 
 ###########3main functions###################33
@@ -20,7 +21,10 @@ class Gene:
         self.host_lineage = host_lineage
 
 def load_csv():
-    file_location='top_grades+and_tails_alignment.csv'
+    if os.path.isfile('top_grades+and_tails_alignment.csv'):
+        file_location = 'top_grades+and_tails_alignment.csv'
+    else:
+        file_location = os.path.join(os.path.dirname(sys.executable), 'top_grades+and_tails_alignment.csv')
     genes_file = open(file_location, mode='r', newline='')
     genes_file_reader = csv.reader(genes_file, delimiter=',')
     genes_info_dict = {}
@@ -29,9 +33,9 @@ def load_csv():
     next( genes_file_reader)
     for row in genes_file_reader:
         gene_code= row[2]
-        virus_name=row[3]
+        virus_name=str.lower(row[3])
         gene_name =row[4]
-        host_name=row[5]
+        host_name=str.lower(row[5])
         virus_lineage=row[6]
         host_lineage=row[7]
         alignment_val=float(row[0])
@@ -47,6 +51,9 @@ def load_csv():
 
 
 def perfect_match_finder(name,searchby,genes_info_dict,virus_dict,host_dict):
+    for x in tab1.grid_slaves():
+        if int(x.grid_info()["row"]) > 8:
+            x.grid_forget()
     result=[]
     if searchby=='Virus':
         if name in virus_dict.keys():
@@ -65,7 +72,13 @@ def perfect_match_finder(name,searchby,genes_info_dict,virus_dict,host_dict):
 
 
 def search_the_db(host_or_virus_name, search_by_virus, exact_match):
-    file_location = 'virushostdb.formatted.cds.faa'
+    for x in tab1.grid_slaves():
+        if int(x.grid_info()["row"]) > 8:
+            x.grid_forget()
+    if os.path.isfile('virushostdb.formatted.cds.faa'):
+        file_location = 'virushostdb.formatted.cds.faa'
+    else:
+        file_location = os.path.join(os.path.dirname(sys.executable), 'virushostdb.formatted.cds.faa')
     file = open(file_location)
     line = file.readline()
     ans_lists = []
@@ -73,9 +86,9 @@ def search_the_db(host_or_virus_name, search_by_virus, exact_match):
         if line[0] == '>':
             gene_data = line.split('|')
             gene_code = gene_data[0][1:gene_data[0].find(' ')]
-            virus_name = gene_data[0][gene_data[0].find(' ')+1:]
+            virus_name = str.lower(gene_data[0][gene_data[0].find(' ')+1:])
             gene_name = gene_data[1]
-            host_name = gene_data[2]
+            host_name = str.lower(gene_data[2])
             virus_lineage = gene_data[3]
             host_lineage = gene_data[4]
             if (search_by_virus) and (exact_match) and (virus_name == host_or_virus_name):
@@ -91,7 +104,13 @@ def search_the_db(host_or_virus_name, search_by_virus, exact_match):
 
 
 def search_the_db_for_tails(host_or_virus_name, search_by_virus, exact_match):
-    file_location = 'virushostdb.formatted.cds.faa'
+    for x in tab1.grid_slaves():
+        if int(x.grid_info()["row"]) > 8:
+            x.grid_forget()
+    if os.path.isfile('virushostdb.formatted.cds.faa'):
+        file_location = 'virushostdb.formatted.cds.faa'
+    else:
+        file_location = os.path.join(os.path.dirname(sys.executable), 'virushostdb.formatted.cds.faa')
     file = open(file_location)
     line = file.readline()
     ans_lists = []
@@ -99,9 +118,9 @@ def search_the_db_for_tails(host_or_virus_name, search_by_virus, exact_match):
         if line[0] == '>':
             gene_data = line.split('|')
             gene_code = gene_data[0][1:gene_data[0].find(' ')]
-            virus_name = gene_data[0][gene_data[0].find(' ')+1:]
+            virus_name = str.lower(gene_data[0][gene_data[0].find(' ')+1:])
             gene_name = gene_data[1]
-            host_name = gene_data[2]
+            host_name = str.lower(gene_data[2])
             virus_lineage = gene_data[3]
             host_lineage = gene_data[4]
             if (search_by_virus) and (exact_match) and (virus_name == host_or_virus_name) and ('tail' in gene_name):
@@ -117,7 +136,10 @@ def search_the_db_for_tails(host_or_virus_name, search_by_virus, exact_match):
 
 
 def find_amino_seq(gene_code):
-    file_location='virushostdb.formatted.cds.faa'
+    if os.path.isfile('virushostdb.formatted.cds.faa'):
+        file_location = 'virushostdb.formatted.cds.faa'
+    else:
+        file_location = os.path.join(os.path.dirname(sys.executable), 'virushostdb.formatted.cds.faa')
     amino_seq = ''
     file = open(file_location)
     found_it = False
@@ -304,21 +326,21 @@ def on_tab_selected(event):
 
 def perfect_match_finder_command():
     EmptyRow = ttk.Label(tab1)
-    EmptyRow.grid(row=9, column=0, padx=15, pady=0)
+    EmptyRow.grid(row=12, column=0, padx=15, pady=0)
     genes_info_dict, virus_dict, host_dict = load_csv()
     searchby=SearchBYEntry.get()
     name=NameEntry.get()
     if searchby=='' or name=='':
         return
     global ans_list
-    ans_list=perfect_match_finder(name,searchby,genes_info_dict,virus_dict,host_dict)
+    ans_list=perfect_match_finder(str.lower(name),searchby,genes_info_dict,virus_dict,host_dict)
     if len(ans_list)>0:
 
         create_result_in_gui_with_alignment(ans_list)
-        options_for_continue(11,tab1)
+        options_for_continue(13,tab1)
     else:
         ErrorLabel2 = ttk.Label(tab1, text='We do not have data on the request')
-        ErrorLabel2.grid(row=10, column=0, columnspan=2)
+        ErrorLabel2.grid(row=13, column=0, columnspan=2)
         NameEntry.delete(0, 'end')
 
 
@@ -366,7 +388,7 @@ def fasta_export_seq():
         gene_code = GeneCodeEntry.get()
         seq_to_fasta=aa_seq
     else:
-        gene_code="fusion_leg"
+        gene_code="fusion_tail"
         seq_to_fasta=fusion_seq
     location_for_save=filedialog.askdirectory()
     file=location_for_save+'/'+ gene_code+'.fasta'
@@ -382,7 +404,7 @@ def new_search():
     tabidx=tab_parent.index('current')
     if tabidx==1:
         for x in tab1.grid_slaves():
-            if int(x.grid_info()["row"])>8:
+            if int(x.grid_info()["row"])>11:
                 x.grid_forget()
         SearchBYEntry.delete(0,'end')
         NameEntry.delete(0,'end')
@@ -399,7 +421,7 @@ def new_search():
 
 def create_result_in_gui_with_alignment(ans_list):
     for x in tab1.grid_slaves():
-        if int(x.grid_info()["row"]) > 9:
+        if int(x.grid_info()["row"]) > 12:
             x.grid_forget()
     result_table = ttk.Treeview(tab1, style="mystyle.Treeview")
 
@@ -424,15 +446,15 @@ def create_result_in_gui_with_alignment(ans_list):
 
     ysb = ttk.Scrollbar(tab1, orient='vertical', command=result_table.yview)
     # xsb = ttk.Scrollbar(tab1, orient='horizontal', command=result_table.xview)
-    result_table.grid(row=10, column=0, columnspan=3)
-    ysb.grid(row=10, column=3, sticky='ns')
+    result_table.grid(row=13, column=0, columnspan=3)
+    ysb.grid(row=13, column=3, sticky='ns')
     # xsb.grid(row=11,column=0,columnspan=4,sticky='ew')
     result_table.configure(yscroll=ysb.set)
 
 
 def create_result_in_gui_no_alignment(ans_list):
     for x in tab1.grid_slaves():
-        if int(x.grid_info()["row"]) > 9:
+        if int(x.grid_info()["row"]) > 12:
             x.grid_forget()
     result_table = ttk.Treeview(tab1, style="mystyle.Treeview")
 
@@ -455,45 +477,45 @@ def create_result_in_gui_no_alignment(ans_list):
 
     ysb = ttk.Scrollbar(tab1, orient='vertical', command=result_table.yview)
     # xsb = ttk.Scrollbar(tab1, orient='horizontal', command=result_table.xview)
-    result_table.grid(row=10, column=0, columnspan=3)
-    ysb.grid(row=10, column=3, sticky='ns')
+    result_table.grid(row=13, column=0, columnspan=3)
+    ysb.grid(row=13, column=3, sticky='ns')
     # xsb.grid(row=11,column=0,columnspan=4,sticky='ew')
     result_table.configure(yscroll=ysb.set)
 
 
 def db_searcher():
     EmptyRow = ttk.Label(tab1)
-    EmptyRow.grid(row=9, column=0, padx=15, pady=0)
+    EmptyRow.grid(row=12, column=0, padx=15, pady=0)
     searchby=SearchBYEntry.get()
-    name= NameEntry.get()
+    name= str.lower(NameEntry.get())
     if searchby=='' or name=='':
         return
     global ans_list
     ans_list=search_the_db(name,searchby=='Virus',False)
     if len(ans_list)>0:
         create_result_in_gui_no_alignment(ans_list)
-        options_for_continue(11,tab1)
+        options_for_continue(14,tab1)
     else:
         ErrorLabel2 = ttk.Label(tab1, text='We do not have data on the request')
-        ErrorLabel2.grid(row=10, column=0, columnspan=2)
+        ErrorLabel2.grid(row=13, column=0, columnspan=2)
         NameEntry.delete(0, 'end')
 
 
 def tail_searcher():
     EmptyRow = ttk.Label(tab1)
-    EmptyRow.grid(row=9, column=0, padx=15, pady=0)
+    EmptyRow.grid(row=12, column=0, padx=15, pady=0)
     searchby=SearchBYEntry.get()
-    name= NameEntry.get()
+    name= str.lower(NameEntry.get())
     if searchby=='' or name=='':
         return
     global ans_list
     ans_list=search_the_db_for_tails(name,searchby=='Virus',False)
     if len(ans_list)>0:
         create_result_in_gui_no_alignment(ans_list)
-        options_for_continue(11,tab1)
+        options_for_continue(14,tab1)
     else:
         ErrorLabel2 = ttk.Label(tab1, text='We do not have data on the request')
-        ErrorLabel2.grid(row=10, column=0, columnspan=2)
+        ErrorLabel2.grid(row=13, column=0, columnspan=2)
         NameEntry.delete(0, 'end')
 
 
@@ -503,12 +525,12 @@ def find_seq():
     aa_seq=find_amino_seq(gene_code)
     if aa_seq=='':
         ErrorLabel2 = ttk.Label(tab2, text='We do not have data on the request')
-        ErrorLabel2.grid(row=10, column=0, columnspan=2)
+        ErrorLabel2.grid(row=13, column=0, columnspan=2)
         GeneCodeEntry.delete(0, 'end')
     else:
         AAtext = tk.Text(tab2)
         AAtext.insert('1.0',aa_seq,('text'))
-        AAtext.grid(row=10,column=0,padx=15, pady=10,columnspan=10)
+        AAtext.grid(row=13,column=0,padx=15, pady=10,columnspan=10)
         AAtext.tag_configure('text',font=("Calibri", 12), relief='raised')
         options_for_continue(11,tab2)
 
@@ -674,7 +696,7 @@ def specific_location_selection():
         for x in tab3.grid_slaves():
             if int(x.grid_info()["row"]) > 1:
                 x.grid_forget()
-        FusionLabel = ttk.Label(tab3, text='The sequence for your new requested leg is ready!')
+        FusionLabel = ttk.Label(tab3, text='The sequence for your new requested tail is ready!')
         FusionLabel.grid(row=2, column=1, columnspan=10,padx=15)
         FusionLocationLabel = ttk.Label(tab3, text='Pyocin: 0 to '+str(pyocin_ind)+'   Target: '+str(target_ind)+' to '
                                                    + str(protein_len))
@@ -779,12 +801,16 @@ Heading=ttk.Label(tab0,text="iGEM Tel Aviv 2019      TailOR-Swift",font=('Calibr
 Heading.grid(row=0,column=0, padx=15, pady=10,columnspan=10)
 #Heading=ttk.Label(tab0,text="TailOR Swift",font=('Calibri', '12','bold'))
 #Heading.grid(row=0,column=2, padx=15, pady=10,columnspan=3)
-im = Image.open('tailorswift.jpg')
+if os.path.isfile('tailorswift.jpg'):
+    file_location = 'tailorswift.jpg'
+else:
+    file_location = os.path.join(os.path.dirname(sys.executable), 'tailorswift.jpg')
+im = Image.open(file_location)
 ph = ImageTk.PhotoImage(im)
 TailImage= ttk.Label(tab0,image=ph)
 TailImage.grid(row=1,column=0,columnspan=10,rowspan=10)
 InstructionLabel= ttkwidgets.LinkLabel(tab0, text="For software instruction press here",
-link="https://2019.igem.org/Team:TAU_Israel",
+link="https://2019.igem.org/Team:TAU_Israel/Software",
 normal_color=StColors.purple,
 hover_color=StColors.torkiz,
 clicked_color=StColors.light_grey)
@@ -827,6 +853,13 @@ FutionMatchButton.grid(row=8,column=1)
 DBsearchButton=ttk.Button(tab1,text='DB search',width=12,command=db_searcher)
 DBsearchButton.grid(row=8,column=2)
 style.configure("TButton", focuscolor=StColors.purple)
+explanationLabel_perfect_switch=ttk.Label(tab1,text='Use \'Perfect Switch\' button to search for matching bacteriophage tails')
+explanationLabel_perfect_switch.grid(row=9,column=0, columnspan=3,sticky=tk.W, padx=15, pady=10)
+explanationLabel_tails_search=ttk.Label(tab1,text='Use \'Tails search\' button to search for proteins which their names includes \'tail\'')
+explanationLabel_tails_search.grid(row=10,column=0, columnspan=3,sticky=tk.W, padx=15, pady=10)
+explanationLabel_tails_search=ttk.Label(tab1,text='Use \'DB search\' button to search for all matching proteins in the database')
+explanationLabel_tails_search.grid(row=11,column=0, columnspan=3,sticky=tk.W, padx=15, pady=10)
+
 
 ########WIDGETS for TAB2 #####################
 Heading=ttk.Label(tab2,text="Find AA Sequence for Gene",font=('Calibri', '12','bold'))
@@ -843,6 +876,7 @@ EmptyRow.grid(row=3,column=0,columnspan=2, padx=15, pady=0)
 AASeqButton=ttk.Button(tab2,text='Find',width=12,command=find_seq)
 AASeqButton.grid(row=4,column=1)
 
+
 ########WIDGETS for TAB3 #####################
 
 
@@ -855,8 +889,17 @@ EmptyRow.grid(row=1,column=0,columnspan=2, padx=15, pady=0)
 FusionButton=ttk.Button(tab3,text='Create Fusion',width=12,command=create_fusion)
 FusionButton.grid(row=2,column=5,columnspan=10)
 
+explanation=ttk.Label(tab3, text='To create the fusion you need to create the following files:')
+explanation.grid(row=3,column=0, padx=15, pady=10,columnspan=10, sticky=tk.W)
+explanation=ttk.Label(tab3, text='Secondary structure file by using - ')
+explanation.grid(row=4,column=0, padx=15, pady=10,columnspan=10, sticky=tk.W)
+explanation=ttk.Label(tab3, text='https://www.predictprotein.org/home')
+explanation.grid(row=5,column=0, padx=15, pady=10,columnspan=10, sticky=tk.W)
+explanation=ttk.Label(tab3, text='Domains prediction file by using - ')
+explanation.grid(row=6,column=0, padx=15, pady=10,columnspan=10, sticky=tk.W)
+explanation=ttk.Label(tab3, text='https://www.ebi.ac.uk/Tools/hmmer/search/hmmscan')
+explanation.grid(row=7,column=0, padx=15, pady=10,columnspan=10, sticky=tk.W)
+
 tab_parent.pack(expand=1, fill='both')
 
 gui.mainloop()
-
-
