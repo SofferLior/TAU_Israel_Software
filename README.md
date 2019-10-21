@@ -8,5 +8,5 @@ For using the software ( No python required) -
   (2) Execute zip file
   (3) Run "Run-Tail OR_Swift" 
   
-  Enjoy
+Enjoy
 
